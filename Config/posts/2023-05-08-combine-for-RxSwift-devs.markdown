@@ -4,8 +4,7 @@ title: "Combine for RxSwift Developers"
 date: 2023-04-30 20:00:00 +0100
 permalink: /combine-guide-for-rxswift-devs
 ---
-
-# This guide is a practical introduction to `Combine` for developers who have experience with `RxSwift`, so that you can get up to speed quicky and start writing production code as quickly as possible. 
+This guide is a practical introduction to `Combine` for developers who have experience with `RxSwift`, so that you can get up to speed quicky and start writing production code as quickly as possible.
 
 The goal is accelerated learning, so that you can start writing production code with `Combine` in no time at all. While most of the knowledge you have about `RxSwift` translates well to `Combine`, going through existing resources, tutorials, books and blog posts can be time-consuming. This guide aims to summarize what you really need to know to get started and provide a jumping platform for more in-depth learning. You can treat it as a quick reference.
 

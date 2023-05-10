@@ -31,9 +31,7 @@ github_username: wyszo
 
 # Build settings
 theme: minima
-
-minima:
-  skin: solarized
+show_excerpts: true
 
 # Google Analytics
 # google_analytics: UA-NNNNNNNN-N
