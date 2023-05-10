@@ -23,13 +23,21 @@ email: thomas.wyszomirski.dev (gmail)
 description: >- # this means to ignore newlines until "baseurl:"
 #  Thomas Wyszomirski Tech Blog: Swift iOS Mobile Development Professional Guide Combine RxSwift Tutorial Objective-C Manchester UK London.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+domain: wyszo.github.io
+url: "https://wyszo.github.io"
 twitter_username: wyszo
 linkedin_username: tomaszwyszomirski
 github_username: wyszo
 
 # Build settings
 theme: minima
+
+minima:
+  skin: solarized
+
+# Google Analytics
+# google_analytics: UA-NNNNNNNN-N
+
 plugins:
   - jekyll-feed
 # - jeykll-seo-tag
