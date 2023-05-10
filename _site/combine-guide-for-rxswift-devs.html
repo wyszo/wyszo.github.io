@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Combine for RxSwift Developers | Thomas Wyszomirski Tech Blog</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Combine for RxSwift Developers" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This guide is a practical introduction to Combine for developers who have experience with RxSwift, so that you can get up to speed quicky and start writing production code as quickly as possible." />
+<meta property="og:description" content="This guide is a practical introduction to Combine for developers who have experience with RxSwift, so that you can get up to speed quicky and start writing production code as quickly as possible." />
+<link rel="canonical" href="/combine-guide-for-rxswift-devs" />
+<meta property="og:url" content="/combine-guide-for-rxswift-devs" />
+<meta property="og:site_name" content="Thomas Wyszomirski Tech Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-04-30T20:00:00+01:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Combine for RxSwift Developers" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-04-30T20:00:00+01:00","datePublished":"2023-04-30T20:00:00+01:00","description":"This guide is a practical introduction to Combine for developers who have experience with RxSwift, so that you can get up to speed quicky and start writing production code as quickly as possible.","headline":"Combine for RxSwift Developers","mainEntityOfPage":{"@type":"WebPage","@id":"/combine-guide-for-rxswift-devs"},"url":"/combine-guide-for-rxswift-devs"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Thomas Wyszomirski Tech Blog" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Thomas Wyszomirski Tech Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Combine for RxSwift Developers</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2023-04-30T20:00:00+01:00" itemprop="datePublished">Apr 30, 2023
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h1 id="this-guide-is-a-practical-introduction-to-combine-for-developers-who-have-experience-with-rxswift-so-that-you-can-get-up-to-speed-quicky-and-start-writing-production-code-as-quickly-as-possible">This guide is a practical introduction to <code class="language-plaintext highlighter-rouge">Combine</code> for developers who have experience with <code class="language-plaintext highlighter-rouge">RxSwift</code>, so that you can get up to speed quicky and start writing production code as quickly as possible.</h1>
+
+<p>The goal is accelerated learning, so that you can start writing production code with <code class="language-plaintext highlighter-rouge">Combine</code> in no time at all. While most of the knowledge you have about <code class="language-plaintext highlighter-rouge">RxSwift</code> translates well to <code class="language-plaintext highlighter-rouge">Combine</code>, going through existing resources, tutorials, books and blog posts can be time-consuming. This guide aims to summarize what you really need to know to get started and provide a jumping platform for more in-depth learning. You can treat it as a quick reference.</p>
+
+<p>Additionaly, a nicely formatted printable PDF version of this guide is available <a href="todo"><em>here</em></a>.</p>
+
+<p>If you’re reading this, chances are that your codebase relies heavily on <code class="language-plaintext highlighter-rouge">RxSwift</code> streams. You’re probably using them with <code class="language-plaintext highlighter-rouge">UIKit</code>. Now, you might be considering the introduction of new <code class="language-plaintext highlighter-rouge">SwiftUI</code> components, but there’s a catch - <code class="language-plaintext highlighter-rouge">SwiftUI</code> bindings use <code class="language-plaintext highlighter-rouge">Combine</code>, not <code class="language-plaintext highlighter-rouge">RxSwift</code>. So, how can you feed your new Views with data from the existing streams?</p>
+
+<p>The good news is, you don’t need to rewrite existing RxStreams into <code class="language-plaintext highlighter-rouge">Combine</code>. Instead, all you need is a translation layer between the two. Thankfully, this is a fairly common problem and it’s been solved by an open source library: <a href="https://github.com/CombineCommunity/RxCombine">RxCombine</a>. It provides bi-directional bindings that are extremely easy to work with.</p>
+
+<p>It’s not worth rewriting existing <code class="language-plaintext highlighter-rouge">RxSwift</code> streams into <code class="language-plaintext highlighter-rouge">Combine</code>. Instead, plug your existing streams into <code class="language-plaintext highlighter-rouge">SwiftUI</code> components using a translation layer.</p>
+
+<p>This can be achieved with <code class="language-plaintext highlighter-rouge">RxCombine</code> library (https://github.com/CombineCommunity/RxCombine).</p>
+
+<h3 id="is-it-worth-rewriting-existing-rxswift-streams-into-combine">Is it worth rewriting existing <code class="language-plaintext highlighter-rouge">RxSwift</code> streams into Combine?</h3>
+
+<p>In most cases, it’s probably not worth the effort to manually rewrite them into <code class="language-plaintext highlighter-rouge">Combine</code>. Here are a few reasons why:</p>
+
+<ul>
+  <li>The existing code is already working and has likely been thoroughly tested. Rewriting it could introduce new issues that would take time to debug and fix.</li>
+  <li><code class="language-plaintext highlighter-rouge">RxSwift</code> code is highly reusable, ReactiveX framework has been implemented in multiple programming languages. It’s possible to reuse your <code class="language-plaintext highlighter-rouge">RxSwift</code> code across different platforms with minimal modifications.</li>
+  <li>Depnding on the size and complexity of the codebase, it may take a significatn amount of time and effort to rewrite everything in <code class="language-plaintext highlighter-rouge">Combine</code>, with no guarantee of significant improvement in performance or functionality.</li>
+</ul>
+
+<h2 id="rxswift-vs-combine-basic-things-to-consider"><code class="language-plaintext highlighter-rouge">RxSwift</code> vs Combine: Basic Things to Consider</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">RxSwift</code> has <code class="language-plaintext highlighter-rouge">RxCocoa</code> bindings, which make it eaqsy to work with <code class="language-plaintext highlighter-rouge">UIKit</code>.</li>
+  <li>While <code class="language-plaintext highlighter-rouge">Combine</code> has some native <code class="language-plaintext highlighter-rouge">UIKit</code> bindings, they are fairly basic. More extensive implementation is provided via a 3rd party library <a href="https://github.com/CombineCommunity/CombineCocoa"><code class="language-plaintext highlighter-rouge">CombineCocoa</code></a>, but it’s far from complete.</li>
+  <li><code class="language-plaintext highlighter-rouge">RxSwift</code> is compatible with both Swift and <code class="language-plaintext highlighter-rouge">Objective-C</code>, but <code class="language-plaintext highlighter-rouge">Combine</code> only works with Swift.</li>
+  <li><code class="language-plaintext highlighter-rouge">Combine</code> is available on iOS13 and later, but some <code class="language-plaintext highlighter-rouge">SwiftUI</code> features are only available on iOS 14 or 15. If your code targets iOS 13 or 14, you might need to use backports or conditional execution to implement some functionality. For example good Markdown support in <code class="language-plaintext highlighter-rouge">SwiftUI</code> is only available on iOS 15 or later.</li>
+</ul>
+
+<p>Further reading:</p>
+
+<ul>
+  <li><a href="https://www.hackingwithswift.com/articles/235/whats-new-in-swiftui-for-ios-15"><em>Hacking with Swift: What’s new in SwiftUI for iOS15</em> (https://www.hackingwithswift.com/articles/235/whats-new-in-swiftui-for-ios-15)</a></li>
+  <li><a href="https://www.mongodb.com/developer/products/realm/realm-ios15-swiftui/"><em>MongoDB blog: Most Useful iOS15 SwiftUI Features</em> (https://www.mongodb.com/developer/products/realm/realm-ios15-swiftui/)</a>.</li>
+</ul>
+
+<h2 id="terminology-differences">Terminology Differences</h2>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Observables</code> vs. <code class="language-plaintext highlighter-rouge">Publishers</code>: In <code class="language-plaintext highlighter-rouge">RxSwift</code>, a stream of values is called an <code class="language-plaintext highlighter-rouge">Observable</code>, while in Swift <code class="language-plaintext highlighter-rouge">Combine</code>, it’s called a <code class="language-plaintext highlighter-rouge">Publisher</code>.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Observers</code> vs. <code class="language-plaintext highlighter-rouge">Subscribers</code>: In <code class="language-plaintext highlighter-rouge">RxSwift</code>, an object that receives values from an <code class="language-plaintext highlighter-rouge">Observable</code> is called an <code class="language-plaintext highlighter-rouge">Observer</code>, while in Swift <code class="language-plaintext highlighter-rouge">Combine</code>, it’s called a <code class="language-plaintext highlighter-rouge">Subscriber</code>.</p>
+  </li>
+  <li>
+    <p>Both <code class="language-plaintext highlighter-rouge">RxSwift</code> and Swift <code class="language-plaintext highlighter-rouge">Combine</code> use operators to transform and <code class="language-plaintext highlighter-rouge">Combine</code> streams of values.</p>
+  </li>
+</ul>
+
+<h2 id="syntax">Syntax</h2>
+
+<p>Syntax between <code class="language-plaintext highlighter-rouge">RxSwift</code> and <code class="language-plaintext highlighter-rouge">Combine</code> is quite similar, however <code class="language-plaintext highlighter-rouge">Combine</code> <code class="language-plaintext highlighter-rouge">Publishers</code> use associated types instead of generics, which makes them strongly typed. In practice this means you’ll call <code class="language-plaintext highlighter-rouge">eraseToAnyPublisher()</code> <em>A LOT</em> to make your code more practical and concise.</p>
+
+<h2 id="creating-and-subscribing-to-streams-publishers">Creating and Subscribing to Streams (Publishers)</h2>
+
+<h3 id="creating-simple-streams-publishers">Creating Simple Streams (Publishers)</h3>
+
+<p>In <code class="language-plaintext highlighter-rouge">RxSwift</code> simple streams can be created using the <code class="language-plaintext highlighter-rouge">Observable.create</code> function or by using predefined methods like <code class="language-plaintext highlighter-rouge">just</code>, <code class="language-plaintext highlighter-rouge">from</code>, or <code class="language-plaintext highlighter-rouge">of</code>.</p>
+
+<p>In <code class="language-plaintext highlighter-rouge">Combine</code> they’re called <code class="language-plaintext highlighter-rouge">Publishers</code> and they can be created using predefined methods like <code class="language-plaintext highlighter-rouge">Just</code>, <code class="language-plaintext highlighter-rouge">Publishers.Sequence</code>.</p>
+
+<p><em>Example:</em></p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">combinePublisher</span> <span class="o">=</span> <span class="kt">Just</span><span class="p">(</span><span class="s">"Hello world!"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="subscribing-to-publishers">Subscribing to Publishers</h3>
+
+<p>Subscribing to a <code class="language-plaintext highlighter-rouge">Combine</code> publisher using the <code class="language-plaintext highlighter-rouge">sink</code> method.</p>
+
+<p><em>Example:</em></p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">combinePublisher</span><span class="o">.</span><span class="nf">sink</span><span class="p">(</span><span class="nv">receiveCompletion</span><span class="p">:</span> <span class="p">{</span> <span class="n">completion</span> <span class="k">in</span>
+    <span class="k">switch</span> <span class="n">completion</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="o">.</span><span class="nv">finished</span><span class="p">:</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Completed"</span><span class="p">)</span>
+    <span class="k">case</span> <span class="o">.</span><span class="nf">failure</span><span class="p">(</span><span class="k">let</span> <span class="nv">error</span><span class="p">):</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Error: </span><span class="se">\(</span><span class="n">error</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">},</span> <span class="nv">receiveValue</span><span class="p">:</span> <span class="p">{</span> <span class="n">value</span> <span class="k">in</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h2 id="memory-management-cancelling-subscriptions">Memory Management (Cancelling Subscriptions)</h2>
+
+<p>In both technologies, you still have to remember to dispose your streams to avoid memory leaks.</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">DisposeBag</code> vs. <code class="language-plaintext highlighter-rouge">AnyCancellable</code>: In <code class="language-plaintext highlighter-rouge">RxSwift</code>, the <code class="language-plaintext highlighter-rouge">DisposeBag</code> class is used to manage subscriptions and ensure that they are cancelled when the object that owns them is deallocated. In Swift <code class="language-plaintext highlighter-rouge">Combine</code>, the <code class="language-plaintext highlighter-rouge">AnyCancellable</code> class is used for the same purpose.</p>
+  </li>
+  <li>
+    <p>Cancelling subscriptions: In both frameworks, subscriptions can be cancelled manually using the <code class="language-plaintext highlighter-rouge">dispose</code> method (in RxSwift) or the <code class="language-plaintext highlighter-rouge">cancel</code> method (in Combine).</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Combine</code> <code class="language-plaintext highlighter-rouge">sink</code> operator (<code class="language-plaintext highlighter-rouge">subscribe</code> equivalent) creates a subscription that needs to be taken care of.</p>
+  </li>
+  <li>
+    <p>You can use <code class="language-plaintext highlighter-rouge">store(in:)</code> method to bind a subscription to a set of <code class="language-plaintext highlighter-rouge">AnyCancellables</code> (effectively mimicking <code class="language-plaintext highlighter-rouge">RxSwift</code> <code class="language-plaintext highlighter-rouge">DisposeBag</code>)</p>
+  </li>
+</ul>
+
+<p>Here’s how this looks in practice in <code class="language-plaintext highlighter-rouge">Combine</code>:</p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">Combine</span>
+
+<span class="kd">class</span> <span class="kt">DataFetchService</span> <span class="p">{</span>
+    <span class="kd">fileprivate</span> <span class="k">var</span> <span class="nv">cancellables</span> <span class="o">=</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">AnyCancellable</span><span class="o">&gt;</span><span class="p">()</span>
+    
+    <span class="kd">func</span> <span class="nf">fetchData</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kt">URLSession</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">dataTaskPublisher</span><span class="p">(</span><span class="nv">for</span><span class="p">:</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"https://example.com"</span><span class="p">)</span><span class="o">!</span><span class="p">)</span>
+            <span class="o">.</span><span class="nf">map</span><span class="p">(\</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="o">.</span><span class="nf">decode</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt">MyData</span><span class="o">.</span><span class="k">self</span><span class="p">,</span> <span class="nv">decoder</span><span class="p">:</span> <span class="kt">JSONDecoder</span><span class="p">())</span>
+            <span class="o">.</span><span class="nf">sink</span><span class="p">(</span><span class="nv">receiveCompletion</span><span class="p">:</span> <span class="p">{</span> <span class="n">_</span> <span class="k">in</span> <span class="p">},</span> <span class="nv">receiveValue</span><span class="p">:</span> <span class="p">{</span> <span class="n">data</span> <span class="k">in</span>
+                <span class="c1">// Handle the fetched data here</span>
+            <span class="p">})</span>
+            <span class="o">.</span><span class="nf">store</span><span class="p">(</span><span class="nv">in</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">cancellables</span><span class="p">)</span> <span class="c1">// Add the cancellable to the set</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>When the <code class="language-plaintext highlighter-rouge">DataFetchService</code> instance gets out of scope and is deallocated, subscription will be removed.</p>
+
+<p>You could add the following method for allowing manual disposal:</p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">extension</span> <span class="kt">DataFetchService</span> <span class="p">{</span>
+	<span class="cm">/**
+     * If you don't call this manually, the subscription above 
+     * will be removed when the `DataFetchService` object is removed.
+     */</span>
+    <span class="kd">func</span> <span class="nf">cancelFetch</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">cancellables</span><span class="o">.</span><span class="nf">forEach</span><span class="p">(\</span><span class="o">.</span><span class="n">cancel</span><span class="p">)</span>
+        <span class="n">cancellables</span><span class="o">.</span><span class="nf">removeAll</span><span class="p">()</span> 
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>As an additional note, it’s generally recommended to place <code class="language-plaintext highlighter-rouge">cancellables</code> in your view controller when using <code class="language-plaintext highlighter-rouge">UIKit</code> in <code class="language-plaintext highlighter-rouge">Combine</code>. This is because view controllers have a well-defined lifecycle, unlike <code class="language-plaintext highlighter-rouge">ViewModels</code>, and this ensures proper cancellation and prevents leask.</p>
+
+<p><em>Example:</em></p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">struct</span> <span class="kt">PlaneViewModel</span> <span class="p">{</span>
+	<span class="kd">private</span> <span class="k">let</span> <span class="nv">plane</span> <span class="o">=</span> <span class="kt">Plane</span><span class="p">()</span>
+
+	<span class="k">let</span> <span class="nv">currentAltitudeText</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span>
+
+	<span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+		<span class="n">currentAltitudeText</span> <span class="o">=</span> <span class="n">plane</span><span class="o">.</span><span class="err">$</span><span class="n">altitude</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="s">"</span><span class="se">\(</span><span class="nv">$0</span><span class="se">)</span><span class="s"> feet"</span> <span class="p">}</span><span class="o">.</span><span class="nf">eraseToAnyPublisher</span><span class="p">()</span> 
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="kt">FlightDashboardViewController</span> <span class="p">{</span>
+	<span class="k">let</span> <span class="nv">viewModel</span> <span class="o">=</span> <span class="kt">PlaneViewModel</span><span class="p">()</span>
+	<span class="k">let</span> <span class="nv">label</span> <span class="o">=</span> <span class="kt">UILabel</span><span class="p">()</span>
+
+	<span class="k">var</span> <span class="nv">cancellables</span> <span class="o">=</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">AnyCancelable</span><span class="o">&gt;</span><span class="p">()</span>
+
+	<span class="k">override</span> <span class="kd">func</span> <span class="nf">viewDidLoad</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">super</span><span class="o">.</span><span class="nf">viewDidLoad</span><span class="p">()</span>
+		<span class="nf">createSubscriptions</span><span class="p">()</span>
+	<span class="p">}</span>
+
+	<span class="kd">private</span> <span class="kd">func</span> <span class="nf">createSubscriptions</span><span class="p">()</span> <span class="p">{</span>
+		<span class="n">viewModel</span><span class="o">.</span><span class="n">currentAltitudeText</span>
+			<span class="o">.</span><span class="nf">assign</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="p">\</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="nv">on</span><span class="p">:</span> <span class="n">label</span><span class="p">)</span>
+			<span class="o">.</span><span class="nf">store</span><span class="p">(</span><span class="nv">in</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">cancellables</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="operator-naming-differences">Operator Naming Differences</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">reduce</code> (RxSwift) -&gt; <code class="language-plaintext highlighter-rouge">scan</code> (Combine)</li>
+  <li><code class="language-plaintext highlighter-rouge">flatMapLatest</code> (RxSwift) -&gt; <code class="language-plaintext highlighter-rouge">switchToLatest</code> <a href="https://reactivex.io/documentation/operators/switch.html">Switch marble diagram explanation</a></li>
+  <li>It’s worth reading on the <code class="language-plaintext highlighter-rouge">scan</code> and <code class="language-plaintext highlighter-rouge">switchToLatest</code> behaviour as they’re similar, but not exactly the same as their <code class="language-plaintext highlighter-rouge">RxSwift</code> equivalents (detailed explanation is provided later).</li>
+  <li>Operators such as <code class="language-plaintext highlighter-rouge">map</code>, <code class="language-plaintext highlighter-rouge">filter</code>, <code class="language-plaintext highlighter-rouge">flatMap</code>, <code class="language-plaintext highlighter-rouge">merge</code>, <code class="language-plaintext highlighter-rouge">zip</code>, <code class="language-plaintext highlighter-rouge">combineLatest</code>, <code class="language-plaintext highlighter-rouge">debounce</code>, <code class="language-plaintext highlighter-rouge">throttle</code> have the same name in both frameworks.</li>
+</ul>
+
+<p><em>Example:</em></p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">numbers</span> <span class="o">=</span> <span class="kt">Publishers</span><span class="o">.</span><span class="kt">Sequence</span><span class="p">(</span><span class="nv">sequence</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+<span class="n">numbers</span><span class="o">.</span><span class="n">filter</span> <span class="p">{</span> <span class="nv">$0</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">}</span>
+    <span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="s">"</span><span class="se">\(</span><span class="nv">$0</span><span class="se">)</span><span class="s"> is even"</span> <span class="p">}</span>
+    <span class="o">.</span><span class="nf">sink</span><span class="p">(</span><span class="nv">receiveValue</span><span class="p">:</span> <span class="p">{</span> <span class="n">value</span> <span class="k">in</span>
+        <span class="nf">print</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="p">})</span><span class="o">.</span><span class="nf">store</span><span class="p">(</span><span class="nv">in</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">cancellables</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="more-on-flatmaplatest-vs-switchtolatest">More on <code class="language-plaintext highlighter-rouge">flatMapLatest</code> vs. <code class="language-plaintext highlighter-rouge">switchToLatest</code></h3>
+
+<p>When nesting publishers, <code class="language-plaintext highlighter-rouge">switchToLatest</code> only subscribes to the publisher that emited the last value, cancelling subscription to other publishers. This is best explained with an example:</p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">Combine</span>
+
+<span class="k">let</span> <span class="nv">nestedPublishers</span> <span class="o">=</span> <span class="kt">PassthroughSubject</span><span class="o">&lt;</span><span class="kt">PassthroughSubject</span><span class="o">&lt;</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span><span class="p">()</span>
+
+<span class="k">let</span> <span class="nv">subscription</span> <span class="o">=</span> <span class="n">nestedPublishers</span>
+    <span class="o">.</span><span class="nf">switchToLatest</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">sink</span> <span class="p">{</span> <span class="n">value</span> <span class="k">in</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Received value: </span><span class="se">\(</span><span class="n">value</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="k">let</span> <span class="nv">publisher1</span> <span class="o">=</span> <span class="kt">PassthroughSubject</span><span class="o">&lt;</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="k">let</span> <span class="nv">publisher2</span> <span class="o">=</span> <span class="kt">PassthroughSubject</span><span class="o">&lt;</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span><span class="p">()</span>
+
+<span class="n">nestedPublishers</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="n">publisher1</span><span class="p">)</span>
+<span class="n">publisher1</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">publisher1</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">nestedPublishers</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="n">publisher2</span><span class="p">)</span>
+<span class="n">publisher1</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c1">// Will not be received</span>
+<span class="n">publisher2</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Note that if this was <code class="language-plaintext highlighter-rouge">RxSwift</code> and <code class="language-plaintext highlighter-rouge">flatMapLatest</code>, the value ‘3’ would still be printed out.</p>
+
+<h3 id="publishercombinelatestx">Publisher.CombineLatestX</h3>
+
+<p>Some of the operators have a variant implemented on a generic <code class="language-plaintext highlighter-rouge">Publisher</code> type that contain number of expected parameters, for example: <code class="language-plaintext highlighter-rouge">Publishers.CombineLatest</code> (supports only 2 publishers), <code class="language-plaintext highlighter-rouge">Publishers.CombineLatest3</code>, <code class="language-plaintext highlighter-rouge">Publishers.CombineLatest4</code>.</p>
+
+<p>This can make the syntax rather awkward when you want to use <code class="language-plaintext highlighter-rouge">combineLatest</code> with more than 4 streams, since there are no variants of the operator with more than four parameters (such as <code class="language-plaintext highlighter-rouge">CombineLatest5</code>):</p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">Publishers</span><span class="o">.</span><span class="kt">CombineLatest4</span><span class="p">(</span><span class="err">$</span><span class="n">var0</span><span class="p">,</span> <span class="err">$</span><span class="n">var1</span><span class="p">,</span> <span class="err">$</span><span class="n">var2</span><span class="p">,</span> <span class="err">$</span><span class="n">var3</span><span class="p">)</span>
+	<span class="o">.</span><span class="nf">combineLatest</span><span class="p">(</span><span class="err">$</span><span class="n">var4</span><span class="p">)</span>
+	<span class="o">.</span><span class="nf">combineLatest</span><span class="p">(</span><span class="err">$</span><span class="n">var5</span><span class="p">)</span>
+	<span class="o">.</span><span class="n">sink</span> <span class="p">{</span> <span class="n">completion</span> 
+		<span class="c1">// ...</span>
+	<span class="p">}</span><span class="o">.</span><span class="nv">receiveValue</span><span class="p">:</span> <span class="p">{</span> <span class="n">res0</span><span class="p">,</span> <span class="n">res1</span> <span class="k">in</span>
+		<span class="k">let</span> <span class="nv">variables</span> <span class="o">=</span> <span class="n">res0</span><span class="o">.</span><span class="mi">0</span>
+		<span class="k">let</span> <span class="nv">var0</span> <span class="o">=</span> <span class="n">variables</span><span class="o">.</span><span class="mi">0</span>
+		<span class="k">let</span> <span class="nv">var1</span> <span class="o">=</span> <span class="n">variables</span><span class="o">.</span><span class="mi">1</span>
+		<span class="k">let</span> <span class="nv">var2</span> <span class="o">=</span> <span class="n">variables</span><span class="o">.</span><span class="mi">2</span>
+		<span class="k">let</span> <span class="nv">var3</span> <span class="o">=</span> <span class="n">variables</span><span class="o">.</span><span class="mi">3</span>
+		<span class="k">let</span> <span class="nv">var4</span> <span class="o">=</span> <span class="n">res0</span><span class="o">.</span><span class="mi">1</span>
+		<span class="k">let</span> <span class="nv">var5</span> <span class="o">=</span> <span class="n">res1</span>
+		<span class="c1">// ...</span>
+	<span class="p">}</span><span class="o">.</span><span class="nf">store</span><span class="p">(</span><span class="nv">in</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">cancellables</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The method illustrated above also works for <code class="language-plaintext highlighter-rouge">Publishers.Zip3</code>, <code class="language-plaintext highlighter-rouge">Publishers.Zip4</code>, etc.</p>
+
+<p>Note that there’s an alternative way, but it makes the syntax even more cumbersome:</p>
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">cancellable</span> <span class="o">=</span> <span class="n">publisher1</span><span class="o">.</span><span class="nf">combineLatest</span><span class="p">(</span><span class="n">publisher2</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">combineLatest</span><span class="p">(</span><span class="n">publisher3</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">combineLatest</span><span class="p">(</span><span class="n">publisher4</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">combineLatest</span><span class="p">(</span><span class="n">publisher5</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">sink</span> <span class="p">{</span> <span class="n">res</span> <span class="k">in</span>
+        <span class="k">let</span> <span class="nv">val1</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span>
+        <span class="k">let</span> <span class="nv">val2</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.1</span>
+        <span class="k">let</span> <span class="nv">val3</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="mf">0.0</span><span class="o">.</span><span class="mi">1</span>
+        <span class="k">let</span> <span class="nv">val4</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="mf">0.1</span>
+        <span class="k">let</span> <span class="nv">val5</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="mi">1</span>
+        
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Combined values: </span><span class="se">\(</span><span class="n">val1</span><span class="se">)</span><span class="s">, </span><span class="se">\(</span><span class="n">val2</span><span class="se">)</span><span class="s">, </span><span class="se">\(</span><span class="n">val3</span><span class="se">)</span><span class="s">, </span><span class="se">\(</span><span class="n">val4</span><span class="se">)</span><span class="s">, </span><span class="se">\(</span><span class="n">val5</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>If you find yourself hitting this scenario often, it’s worth considering extending Publisher with a generic combineLatest function variant supporting more parameters.</p>
+
+<p>If you frequently encounter this scenario, you might want to consider extending the <code class="language-plaintext highlighter-rouge">Publisher</code> type with a generic function variants that support more parameters for <code class="language-plaintext highlighter-rouge">combineLatest</code>.</p>
+
+<p>In <a href="https://github.com/CombineCommunity/CombineExt"><code class="language-plaintext highlighter-rouge">CombineExt library</code></a>, <code class="language-plaintext highlighter-rouge">Collection.combineLatest</code> function solves that problem. Example usage: <code class="language-plaintext highlighter-rouge">[Just(1), Just(2), Just(3), Just(4)].combineLatest()</code>.</p>
+
+<h2 id="futures">Futures</h2>
+
+<p><code class="language-plaintext highlighter-rouge">Future</code> is an equivalent of an <code class="language-plaintext highlighter-rouge">RxSwift</code> <code class="language-plaintext highlighter-rouge">Single</code>. It emits value or error once (based on a provided closure). This is used for performing an async operation and returning a result. You create a <code class="language-plaintext highlighter-rouge">Future</code> by providing a <code class="language-plaintext highlighter-rouge">Promise</code> using a closure:</p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">Combine</span>
+
+<span class="kd">struct</span> <span class="kt">DataFetchError</span><span class="p">:</span> <span class="kt">Error</span> <span class="p">{}</span>
+
+<span class="kd">func</span> <span class="nf">fetchData</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Error</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kt">Future</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Error</span><span class="o">&gt;</span> <span class="p">{</span> <span class="n">promise</span> <span class="k">in</span>
+        <span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">()</span><span class="o">.</span><span class="nf">asyncAfter</span><span class="p">(</span><span class="nv">deadline</span><span class="p">:</span> <span class="o">.</span><span class="nf">now</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">let</span> <span class="nv">success</span> <span class="o">=</span> <span class="kt">Bool</span><span class="o">.</span><span class="nf">random</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">success</span> <span class="p">{</span>
+                <span class="nf">promise</span><span class="p">(</span><span class="o">.</span><span class="nf">success</span><span class="p">(</span><span class="s">"Data fetch successful!"</span><span class="p">))</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nf">promise</span><span class="p">(</span><span class="o">.</span><span class="nf">failure</span><span class="p">(</span><span class="kt">DataFetchError</span><span class="p">()))</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span><span class="o">.</span><span class="nf">eraseToAnyPublisher</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="k">let</span> <span class="nv">fallbackPublisher</span> <span class="o">=</span> <span class="kt">Just</span><span class="p">(</span><span class="s">"fallback"</span><span class="p">)</span><span class="o">.</span><span class="nf">setFailureType</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="kt">Error</span><span class="o">.</span><span class="k">self</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="nv">subscription</span> <span class="o">=</span> <span class="nf">fetchData</span><span class="p">()</span>
+    <span class="o">.</span><span class="k">catch</span> <span class="p">{</span> <span class="n">_</span> <span class="k">in</span> <span class="n">fallbackPublisher</span> <span class="p">}</span>
+    <span class="o">.</span><span class="nf">sink</span><span class="p">(</span>
+        <span class="nv">receiveCompletion</span><span class="p">:</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">},</span>
+        <span class="nv">receiveValue</span><span class="p">:</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+    <span class="p">)</span>
+
+<span class="n">subscription</span><span class="o">.</span><span class="nf">cancel</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="subjects">Subjects</h2>
+
+<h3 id="publishsubject---passthroughsubject">PublishSubject -&gt; PassthroughSubject</h3>
+
+<p><code class="language-plaintext highlighter-rouge">PassthroughSubject</code> is an equivalent of a <code class="language-plaintext highlighter-rouge">PublishSubject</code>. It allows you to manually emit values and bridge the gap between non-reactive and <code class="language-plaintext highlighter-rouge">Combine</code> code.</p>
+
+<p><em>Example:</em></p>
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">Combine</span>
+
+<span class="k">let</span> <span class="nv">subject</span> <span class="o">=</span> <span class="kt">PassthroughSubject</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Error</span><span class="o">&gt;</span><span class="p">()</span>
+
+<span class="n">subject</span><span class="o">.</span><span class="nf">sink</span><span class="p">(</span>
+    <span class="nv">receiveCompletion</span><span class="p">:</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">},</span>
+    <span class="nv">receiveValue</span><span class="p">:</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+<span class="p">)</span><span class="o">.</span><span class="nf">store</span><span class="p">(</span><span class="nv">in</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">cancellables</span><span class="p">)</span>
+
+<span class="n">subject</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="s">"Hello, world!"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="behaviorsubject---currentvaluesubject">BehaviorSubject -&gt; CurrentValueSubject</h3>
+
+<p><code class="language-plaintext highlighter-rouge">CurrentValueSubject</code> works the same way in <code class="language-plaintext highlighter-rouge">Combine</code> as <code class="language-plaintext highlighter-rouge">BehaviorSubject</code> in RxSwift.</p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">Combine</span>
+
+<span class="k">let</span> <span class="nv">currentValueSubject</span> <span class="o">=</span> <span class="kt">CurrentValueSubject</span><span class="o">&lt;</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">// Prints "Initial value: 0"</span>
+<span class="nf">print</span><span class="p">(</span><span class="s">"Initial value: </span><span class="se">\(</span><span class="n">currentValueSubject</span><span class="o">.</span><span class="n">value</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="nv">subscriber</span> <span class="o">=</span> <span class="n">currentValueSubject</span><span class="o">.</span><span class="n">sink</span> <span class="p">{</span> <span class="n">value</span> <span class="k">in</span>
+    <span class="c1">// Prints "Received value: 1", then "Received value: 2"</span>
+    <span class="nf">print</span><span class="p">(</span><span class="s">"Received value: </span><span class="se">\(</span><span class="n">value</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">currentValueSubject</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">currentValueSubject</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="replaysubject">ReplaySubject</h3>
+
+<p><code class="language-plaintext highlighter-rouge">ReplaySubject</code> in <code class="language-plaintext highlighter-rouge">RxSwift</code> is similar to <code class="language-plaintext highlighter-rouge">BehaviorSubject</code>, but you can specify the length of a buffer to reply (you can think of <code class="language-plaintext highlighter-rouge">BehaviorSubject</code> as a <code class="language-plaintext highlighter-rouge">ReplaySubject</code> with a buffer length equal 1).</p>
+
+<p><code class="language-plaintext highlighter-rouge">ReplaySubject</code> is not available in <code class="language-plaintext highlighter-rouge">Combine</code> by default.</p>
+
+<p>You can use <code class="language-plaintext highlighter-rouge">ReplaySubject</code> from <code class="language-plaintext highlighter-rouge">CombineExt</code> library (https://github.com/CombineCommunity/CombineExt).</p>
+
+<h2 id="common-native-sdk-publishers">Common Native SDK Publishers</h2>
+
+<p>In general the standard library has publishers where you’d expect them. Examples:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">NotificationCenter.Publisher</code></li>
+  <li><code class="language-plaintext highlighter-rouge">Timer.Publisher</code></li>
+  <li><code class="language-plaintext highlighter-rouge">URLSession.DataTaskPublisher</code></li>
+  <li><code class="language-plaintext highlighter-rouge">UrlSession.DownloadTaskPublisher</code>
+etc.</li>
+</ul>
+
+<h2 id="operator-usage-differences">Operator Usage Differences</h2>
+
+<p>There’s a handy cheat sheet listing <code class="language-plaintext highlighter-rouge">RxSwift</code> versions and their <code class="language-plaintext highlighter-rouge">Combine</code> equivalents: <a href="https://github.com/CombineCommunity/rxswift-to-combine-cheatsheet">RxSwift to <code class="language-plaintext highlighter-rouge">Combine</code> Cheat Sheet</a>.</p>
+
+<h2 id="rxcombine-example-converting-streams-into-publisheres-and-vice-versa">RxCombine Example (converting streams into publisheres and vice-versa)</h2>
+
+<p>Example of how to use RxCombine to mix <code class="language-plaintext highlighter-rouge">Combine</code> and <code class="language-plaintext highlighter-rouge">RxSwift</code> streams:</p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">Combine</span>
+<span class="kd">import</span> <span class="kt">RxSwift</span>
+<span class="kd">import</span> <span class="kt">RxCombine</span>
+
+<span class="k">let</span> <span class="nv">combinePublisher</span> <span class="o">=</span> <span class="kt">Just</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="nv">rxSwiftObservable</span> <span class="o">=</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;.</span><span class="nf">from</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+<span class="k">let</span> <span class="nv">stream</span> <span class="o">=</span> <span class="kt">Publishers</span><span class="o">.</span><span class="kt">CombineLatest</span><span class="p">(</span><span class="n">combinePublisher</span><span class="p">,</span> <span class="n">rxSwiftObservable</span><span class="o">.</span><span class="n">rx</span><span class="o">.</span><span class="nf">publisher</span><span class="p">())</span>
+    <span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="nv">$0</span> <span class="o">+</span> <span class="nv">$1</span> <span class="p">}</span>
+    <span class="o">.</span><span class="nf">asObservable</span><span class="p">()</span>
+
+<span class="n">_</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="nf">subscribe</span><span class="p">(</span><span class="nv">onNext</span><span class="p">:</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">})</span>
+</code></pre></div></div>
+
+<h2 id="threading-and-schedulers">Threading and Schedulers</h2>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">observeOn</code> vs. <code class="language-plaintext highlighter-rouge">receive(on:)</code>: In <code class="language-plaintext highlighter-rouge">RxSwift</code>, the <code class="language-plaintext highlighter-rouge">observeOn</code> operator is used to specify the scheduler on which to receive events, while in Swift <code class="language-plaintext highlighter-rouge">Combine</code>, the <code class="language-plaintext highlighter-rouge">receive(on:)</code> operator is used for the same purpose.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">subscribeOn</code>: In <code class="language-plaintext highlighter-rouge">RxSwift</code>, the <code class="language-plaintext highlighter-rouge">subscribeOn</code> operator is used to specify the scheduler on which to subscribe to an Observable. This operator is not available in Swift <code class="language-plaintext highlighter-rouge">Combine</code>.</p>
+  </li>
+  <li>
+    <p>Available schedulers are similar, though the names differ</p>
+
+    <ul>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">RxSwift</code> builtin schedulers:</p>
+
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">CurrentThreadScheduler</code> (default), <code class="language-plaintext highlighter-rouge">MainScheduler</code></li>
+          <li><code class="language-plaintext highlighter-rouge">SerialDispatchQueueScheduler</code>, <code class="language-plaintext highlighter-rouge">ConcurrentDispatchQueueScheduler</code></li>
+          <li><code class="language-plaintext highlighter-rouge">OperationQueue</code> scheduler.</li>
+        </ul>
+      </li>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">Combine</code> builtin schedulers:</p>
+
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">DispatchQueue</code></li>
+          <li><code class="language-plaintext highlighter-rouge">OperationQueue</code></li>
+          <li><code class="language-plaintext highlighter-rouge">RunLoop</code></li>
+          <li><code class="language-plaintext highlighter-rouge">ImmediateScheduler</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>In <code class="language-plaintext highlighter-rouge">Combine</code> if you don’t specify a scheduler explicitly, the same that generated a published value is used.</p>
+  </li>
+</ul>
+
+<p><em>Example:</em></p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">Combine</span>
+
+<span class="k">let</span> <span class="nv">queue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="p">(</span><span class="nv">label</span><span class="p">:</span> <span class="s">"com.example.my-queue"</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="nv">publisher</span> <span class="o">=</span> <span class="kt">URLSession</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">dataTaskPublisher</span><span class="p">(</span><span class="nv">for</span><span class="p">:</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"https://www.example.com"</span><span class="p">)</span><span class="o">!</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="nv">$0</span><span class="o">.</span><span class="n">data</span> <span class="p">}</span>
+    <span class="o">.</span><span class="nf">subscribe</span><span class="p">(</span><span class="nv">on</span><span class="p">:</span> <span class="n">queue</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">decode</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="k">self</span><span class="p">,</span> <span class="nv">decoder</span><span class="p">:</span> <span class="kt">JSONDecoder</span><span class="p">())</span>
+    <span class="o">.</span><span class="nf">receive</span><span class="p">(</span><span class="nv">on</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">sink</span><span class="p">(</span>
+        <span class="nv">receiveCompletion</span><span class="p">:</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">},</span>
+        <span class="nv">receiveValue</span><span class="p">:</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="sharing-subscriptions">Sharing Subscriptions</h2>
+
+<p><code class="language-plaintext highlighter-rouge">share()</code> operator works similarily. It’s used to create a shared publisher that sends values to multiple subscribers while keeping only one connection to the original publisher. It helps to avoid repeating expensive tasks like network requests. Unlike <code class="language-plaintext highlighter-rouge">multicast</code>, <code class="language-plaintext highlighter-rouge">share()</code> handles connections automatically based on active subscribers.</p>
+
+<p>Unlike <code class="language-plaintext highlighter-rouge">RxSwift</code>, there’s no option to specify replay count or scope.</p>
+
+<p><em>Example:</em></p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">Combine</span>
+<span class="kd">import</span> <span class="kt">Foundation</span>
+
+<span class="k">let</span> <span class="nv">url</span> <span class="o">=</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"https://api.example.com/data"</span><span class="p">)</span><span class="o">!</span>
+<span class="k">let</span> <span class="nv">sharedPublisher</span> <span class="o">=</span> <span class="kt">URLSession</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">dataTaskPublisher</span><span class="p">(</span><span class="nv">for</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="nf">share</span><span class="p">()</span>
+
+<span class="k">let</span> <span class="nv">subscriber1</span> <span class="o">=</span> <span class="n">sharedPublisher</span><span class="o">.</span><span class="n">sink</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+<span class="k">let</span> <span class="nv">subscriber2</span> <span class="o">=</span> <span class="n">sharedPublisher</span><span class="o">.</span><span class="n">sink</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>In this example, both subscriber1 and subscriber2 receive values from a single network request, avoiding duplication.</p>
+
+<h2 id="backpressure">Backpressure</h2>
+
+<p>In <code class="language-plaintext highlighter-rouge">RxSwift</code> there’s no implementation of backpressure. In <code class="language-plaintext highlighter-rouge">Combine</code> it allows subscribers to control the rate at which they receive values from publishers. This introduces a concept of demand. When a subscriber subscribes to a publisher, it can specify its initial demand, and it can request more values later if needed.</p>
+
+<p><em>Example:</em></p>
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">Combine</span>
+
+<span class="k">let</span> <span class="nv">publisher</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">...</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">publisher</span>
+<span class="k">let</span> <span class="nv">subscriber</span> <span class="o">=</span> <span class="kt">CustomSubscriber</span><span class="p">()</span>
+
+<span class="n">publisher</span><span class="o">.</span><span class="nf">subscribe</span><span class="p">(</span><span class="n">subscriber</span><span class="p">)</span>
+
+<span class="kd">class</span> <span class="kt">CustomSubscriber</span><span class="p">:</span> <span class="kt">Subscriber</span> <span class="p">{</span>
+    <span class="kd">typealias</span> <span class="kt">Input</span> <span class="o">=</span> <span class="kt">Int</span>
+    <span class="kd">typealias</span> <span class="kt">Failure</span> <span class="o">=</span> <span class="kt">Never</span>
+
+    <span class="kd">private</span> <span class="k">var</span> <span class="nv">subscription</span><span class="p">:</span> <span class="kt">Subscription</span><span class="p">?</span>
+
+    <span class="kd">func</span> <span class="nf">receive</span><span class="p">(</span><span class="nv">subscription</span><span class="p">:</span> <span class="kt">Subscription</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">subscription</span> <span class="o">=</span> <span class="n">subscription</span>
+        <span class="n">subscription</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="o">.</span><span class="nf">max</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="p">}</span>
+
+    <span class="kd">func</span> <span class="nf">receive</span><span class="p">(</span><span class="n">_</span> <span class="nv">input</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Subscribers</span><span class="o">.</span><span class="kt">Demand</span> <span class="p">{</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Received value: </span><span class="se">\(</span><span class="n">input</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">input</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="p">?</span> <span class="o">.</span><span class="nf">max</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span> <span class="o">.</span><span class="k">none</span>
+    <span class="p">}</span>
+
+    <span class="kd">func</span> <span class="nf">receive</span><span class="p">(</span><span class="nv">completion</span><span class="p">:</span> <span class="kt">Subscribers</span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt">Never</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Completed"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<h2 id="debugging">Debugging</h2>
+
+<p>In <code class="language-plaintext highlighter-rouge">Combine</code>, <code class="language-plaintext highlighter-rouge">print()</code> operator is available (equivalent to <code class="language-plaintext highlighter-rouge">debug()</code> from RxSwift.</p>
+
+<p>Additionally, handleEvents allows you to add side effects (like logging or breakpoints, for specific publisher events.</p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">Combine</span>
+
+<span class="k">let</span> <span class="nv">numbersPublisher</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">publisher</span>
+
+<span class="k">let</span> <span class="nv">subscription</span> <span class="o">=</span> <span class="n">numbersPublisher</span>
+    <span class="o">.</span><span class="nf">print</span><span class="p">(</span><span class="s">"Numbers"</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">handleEvents</span><span class="p">(</span><span class="nv">receiveOutput</span><span class="p">:</span> <span class="p">{</span> <span class="n">value</span> <span class="k">in</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">3</span> <span class="p">{</span>
+            <span class="nf">print</span><span class="p">(</span><span class="s">"(Breakpoint): Value == 3"</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+    <span class="o">.</span><span class="n">filter</span> <span class="p">{</span> <span class="nv">$0</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">}</span>
+    <span class="c1">// .map { $0 * $0 }</span>
+    <span class="o">.</span><span class="n">sink</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="hot-and-cold-publishers">Hot and Cold Publishers</h2>
+
+<p>In <code class="language-plaintext highlighter-rouge">Combine</code>, publishers can be classified into two categories: hot and cold publishers.</p>
+
+<h3 id="hot-publishers">Hot Publishers</h3>
+
+<p>Hot publishers are active, meaning they produce values regardless of whether they have active subscribers. When a new subscriber subscribes to a hot publisher, it will receive only the values emitted after the subscription is made. Examples of hot publishers include system events, notifications, and subjects.</p>
+
+<h3 id="cold-publishers">Cold Publishers</h3>
+
+<p>Cold publishers are inactive until they have at least one subscriber. They start producing values only when a subscriber subscribes to them, and they will replay the entire sequence of values for each new subscriber. Examples of cold publishers include <code class="language-plaintext highlighter-rouge">URLSession.dataTaskPublisher</code>, <code class="language-plaintext highlighter-rouge">Just</code>, and <code class="language-plaintext highlighter-rouge">Sequence.publisher</code>.</p>
+
+<h2 id="error-handling">Error Handling</h2>
+
+<p><code class="language-plaintext highlighter-rouge">catch</code>: Allows you to recover from an error by returning an alternate publisher. The error is <em>NOT</em> propagated downstream, and the new publisher continues emitting values.</p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">Combine</span>
+
+<span class="k">let</span> <span class="nv">publisher</span> <span class="o">=</span> <span class="kt">PassthroughSubject</span><span class="o">&lt;</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">Error</span><span class="o">&gt;</span><span class="p">()</span>
+
+<span class="k">let</span> <span class="nv">subscription</span> <span class="o">=</span> <span class="n">publisher</span>
+    <span class="o">.</span><span class="k">catch</span> <span class="p">{</span> <span class="n">error</span> <span class="o">-&gt;</span> <span class="kt">Just</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="k">in</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Error occurred: </span><span class="se">\(</span><span class="n">error</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kt">Just</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="o">.</span><span class="n">sink</span> <span class="p">{</span> <span class="n">value</span> <span class="k">in</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Received value: </span><span class="se">\(</span><span class="n">value</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="n">publisher</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">publisher</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="nv">completion</span><span class="p">:</span> <span class="o">.</span><span class="nf">failure</span><span class="p">(</span><span class="kt">MyError</span><span class="o">.</span><span class="n">exampleError</span><span class="p">))</span>
+<span class="n">publisher</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">retry</code> is also available and working as expected:</p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">Combine</span>
+<span class="kd">import</span> <span class="kt">Foundation</span>
+
+<span class="k">let</span> <span class="nv">url</span> <span class="o">=</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"https://api.example.com/data"</span><span class="p">)</span><span class="o">!</span>
+<span class="k">let</span> <span class="nv">urlPublisher</span> <span class="o">=</span> <span class="kt">URLSession</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">dataTaskPublisher</span><span class="p">(</span><span class="nv">for</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="nv">subscription</span> <span class="o">=</span> <span class="n">urlPublisher</span>
+    <span class="o">.</span><span class="nf">retry</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">sink</span> <span class="p">{</span> <span class="n">completion</span> <span class="k">in</span>
+        <span class="nf">print</span><span class="p">(</span><span class="n">completion</span><span class="p">)</span>
+    <span class="p">}</span> <span class="nv">receiveValue</span><span class="p">:</span> <span class="p">{</span> <span class="n">data</span><span class="p">,</span> <span class="n">response</span> <span class="k">in</span>
+        <span class="nf">print</span><span class="p">(</span><span class="s">"Received data: </span><span class="se">\(</span><span class="n">data</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">replaceError</code> is also available.</p>
+
+<h2 id="unit-tests">Unit Tests</h2>
+
+<p>Use <code class="language-plaintext highlighter-rouge">TestPublisher</code> and <code class="language-plaintext highlighter-rouge">TestSubscriber</code> provided by the <code class="language-plaintext highlighter-rouge">CombineXCTest</code> package to test your custom publishers and subscribers.</p>
+
+<p>For testing asynchronous code, use <code class="language-plaintext highlighter-rouge">XCTestExpectation</code>, which allows you to wait for certain conditions to be met before proceeding with the test.</p>
+
+<p>To test operators that introduce delays or time-based operations, like <code class="language-plaintext highlighter-rouge">debounce</code> or <code class="language-plaintext highlighter-rouge">throttle</code>, you can use a <code class="language-plaintext highlighter-rouge">TestScheduler</code> to control the passage of time during tests.</p>
+
+<h2 id="useful-libraries-combineext">Useful Libraries: CombineExt</h2>
+
+<p>CombineExt library (https://github.com/CombineCommunity/CombineExt) provides implementation of some operators common in <code class="language-plaintext highlighter-rouge">ReactiveX</code> that are not implemented in <code class="language-plaintext highlighter-rouge">Combine</code>. This makes the transition a bit easier when writing new publishers.</p>
+
+<p>Example operators provided:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">withLatestFrom</code></li>
+  <li><code class="language-plaintext highlighter-rouge">amb</code> (takes multiple publishers and only emits a value of the first one to emit)</li>
+  <li><code class="language-plaintext highlighter-rouge">flatMapLatest</code></li>
+  <li><code class="language-plaintext highlighter-rouge">Collection.combineLatest</code> (example: <code class="language-plaintext highlighter-rouge">[Just(1), Just(2), Just(3), Just(4)].combineLatest()</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">Publisher.share(replay:)</code> (same as <code class="language-plaintext highlighter-rouge">Publisher.share</code> but lets you specify buffer length - number of last elements to reply)</li>
+  <li><code class="language-plaintext highlighter-rouge">PassthroughRelay</code> (RxSwift <code class="language-plaintext highlighter-rouge">PublishRelay</code> equivalent)</li>
+</ul>
+
+<h2 id="summary">Summary</h2>
+
+<p>This should provide you with enough information to start working with <code class="language-plaintext highlighter-rouge">Combine</code> publishers (assuming <code class="language-plaintext highlighter-rouge">RxSwift</code> knowledge). If you spot any errors in the guide, don’t hesitate to contact me via email/<a href="https://www.linkedin.com/in/tomaszwyszomirski/">LinkedIn (https://www.linkedin.com/in/tomaszwyszomirski/)</a>.</p>
+
+  </div><a class="u-url" href="/combine-guide-for-rxswift-devs" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Thomas Wyszomirski Tech Blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Thomas Wyszomirski Tech Blog</li><li><a class="u-email" href="mailto:thomas.wyszomirski.dev (gmail)">thomas.wyszomirski.dev (gmail)</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/wyszo"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">wyszo</span></a></li><li><a href="https://www.linkedin.com/in/tomaszwyszomirski"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#linkedin"></use></svg> <span class="username">tomaszwyszomirski</span></a></li><li><a href="https://www.twitter.com/wyszo"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">wyszo</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
