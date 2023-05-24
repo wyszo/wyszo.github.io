@@ -1,8 +1,48 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://wyszo.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://wyszo.github.io/" rel="alternate" type="text/html" /><updated>2023-05-10T18:44:08+01:00</updated><id>https://wyszo.github.io/feed.xml</id><title type="html">Thomas Wyszomirski Tech Blog</title><subtitle></subtitle><entry><title type="html">Combine for RxSwift Developers</title><link href="https://wyszo.github.io/combine-guide-for-rxswift-devs" rel="alternate" type="text/html" title="Combine for RxSwift Developers" /><published>2023-04-30T20:00:00+01:00</published><updated>2023-04-30T20:00:00+01:00</updated><id>https://wyszo.github.io/combine-for-RxSwift-devs</id><content type="html" xml:base="https://wyszo.github.io/combine-guide-for-rxswift-devs">&lt;h1 id=&quot;this-guide-is-a-practical-introduction-to-combine-for-developers-who-have-experience-with-rxswift-so-that-you-can-get-up-to-speed-quicky-and-start-writing-production-code-as-quickly-as-possible&quot;&gt;This guide is a practical introduction to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Combine&lt;/code&gt; for developers who have experience with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RxSwift&lt;/code&gt;, so that you can get up to speed quicky and start writing production code as quickly as possible.&lt;/h1&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://wyszo.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://wyszo.github.io/" rel="alternate" type="text/html" /><updated>2023-05-24T07:29:14+01:00</updated><id>https://wyszo.github.io/feed.xml</id><title type="html">Thomas Wyszomirski Tech Blog</title><subtitle></subtitle><entry><title type="html">Mac OS Ruby environment setup</title><link href="https://wyszo.github.io/mac-os-rbenv" rel="alternate" type="text/html" title="Mac OS Ruby environment setup" /><published>2023-05-24T07:20:00+01:00</published><updated>2023-05-24T07:20:00+01:00</updated><id>https://wyszo.github.io/ruby-env-mac-os</id><content type="html" xml:base="https://wyszo.github.io/mac-os-rbenv">&lt;p&gt;Quick instructions on how to configure Ruby installation for cocoapods on Mac OS. To avoid installing cocoapods gem with sudo.&lt;/p&gt;
+
+&lt;h2 id=&quot;problem&quot;&gt;Problem&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;On Mac OS, when using ruby version bundled with the system (2.6), trying to install a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gem&lt;/code&gt; (such as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cocoapods&lt;/code&gt;) or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundler&lt;/code&gt; often results in permission error.&lt;/li&gt;
+  &lt;li&gt;This still happens on MacOS Ventura.&lt;/li&gt;
+  &lt;li&gt;A lot of people use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo gem install&lt;/code&gt; as a workaround just to get it to work. This is a bad practice and it shouldn’t be used for installing gems.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;solution-install-new-ruby-version-322-using-rbenv&quot;&gt;Solution: install new Ruby version (3.2.2) using rbenv&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Install rbenv through homebrew: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;brew install rbenv ruby-build&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Install the latest stable ruby version &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rbenv install -l to find the latest version then ‘even install &amp;lt;version&amp;gt;’.&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Set global Ruby to that new Ruby installation &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rbenv global 3.2.2&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Add local rbenv ruby path to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.zshrc&lt;/code&gt;: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;export PATH=&quot;$HOME/.rbenv/bin:$PATH&quot; eval &quot;$(rbenv init -)&quot;&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;If you’re getting &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;command not found: rbenv&lt;/code&gt;, run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo &apos;eval $(/opt/homebrew/bin/brew shellenv)&apos; &amp;gt;&amp;gt; ~/.zprofile&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Ensure everything is working. Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;which ruby&lt;/code&gt; It should give you something like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/Users/&amp;lt;username&amp;gt;/.rbenv/shims/ruby&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;You progably want to install bundler right away: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gem install bundler&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;alternatives&quot;&gt;Alternatives&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chruby&lt;/code&gt; can be installed instead of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rbenv&lt;/code&gt;. It’s a bit simpler in terms of shell modifications.&lt;/li&gt;
+&lt;/ul&gt;</content><author><name></name></author><summary type="html">Quick instructions on how to configure Ruby installation for cocoapods on Mac OS. To avoid installing cocoapods gem with sudo.</summary></entry><entry><title type="html">Combine for RxSwift Developers</title><link href="https://wyszo.github.io/combine-guide-for-rxswift-devs" rel="alternate" type="text/html" title="Combine for RxSwift Developers" /><published>2023-04-30T20:00:00+01:00</published><updated>2023-04-30T20:00:00+01:00</updated><id>https://wyszo.github.io/combine-for-RxSwift-devs</id><content type="html" xml:base="https://wyszo.github.io/combine-guide-for-rxswift-devs">&lt;p&gt;This guide is a practical introduction to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Combine&lt;/code&gt; for developers who have experience with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RxSwift&lt;/code&gt;, so that you can get up to speed quicky and start writing production code as quickly as possible.&lt;/p&gt;
 
 &lt;p&gt;The goal is accelerated learning, so that you can start writing production code with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Combine&lt;/code&gt; in no time at all. While most of the knowledge you have about &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RxSwift&lt;/code&gt; translates well to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Combine&lt;/code&gt;, going through existing resources, tutorials, books and blog posts can be time-consuming. This guide aims to summarize what you really need to know to get started and provide a jumping platform for more in-depth learning. You can treat it as a quick reference.&lt;/p&gt;
 
-&lt;p&gt;Additionaly, a nicely formatted printable PDF version of this guide is available &lt;a href=&quot;todo&quot;&gt;&lt;em&gt;here&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Additionaly, a nicely formatted printable PDF version of this guide is &lt;a href=&quot;/assets/CombineForRxSwiftDevs.pdf&quot;&gt;&lt;em&gt;available here&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;If you’re reading this, chances are that your codebase relies heavily on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RxSwift&lt;/code&gt; streams. You’re probably using them with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;UIKit&lt;/code&gt;. Now, you might be considering the introduction of new &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SwiftUI&lt;/code&gt; components, but there’s a catch - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SwiftUI&lt;/code&gt; bindings use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Combine&lt;/code&gt;, not &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RxSwift&lt;/code&gt;. So, how can you feed your new Views with data from the existing streams?&lt;/p&gt;
 
@@ -595,4 +635,4 @@ etc.&lt;/li&gt;
 
 &lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
 
-&lt;p&gt;This should provide you with enough information to start working with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Combine&lt;/code&gt; publishers (assuming &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RxSwift&lt;/code&gt; knowledge). If you spot any errors in the guide, don’t hesitate to contact me via email/&lt;a href=&quot;https://www.linkedin.com/in/tomaszwyszomirski/&quot;&gt;LinkedIn (https://www.linkedin.com/in/tomaszwyszomirski/)&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><category term="Config" /><summary type="html">This guide is a practical introduction to Combine for developers who have experience with RxSwift, so that you can get up to speed quicky and start writing production code as quickly as possible.</summary></entry></feed>
+&lt;p&gt;This should provide you with enough information to start working with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Combine&lt;/code&gt; publishers (assuming &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RxSwift&lt;/code&gt; knowledge). If you spot any errors in the guide, don’t hesitate to contact me via email/&lt;a href=&quot;https://www.linkedin.com/in/tomaszwyszomirski/&quot;&gt;LinkedIn (https://www.linkedin.com/in/tomaszwyszomirski/)&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><summary type="html">This guide is a practical introduction to Combine for developers who have experience with RxSwift, so that you can get up to speed quicky and start writing production code as quickly as possible.</summary></entry></feed>

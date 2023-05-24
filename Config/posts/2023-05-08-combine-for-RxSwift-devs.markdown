@@ -8,7 +8,7 @@ This guide is a practical introduction to `Combine` for developers who have expe
 
 The goal is accelerated learning, so that you can start writing production code with `Combine` in no time at all. While most of the knowledge you have about `RxSwift` translates well to `Combine`, going through existing resources, tutorials, books and blog posts can be time-consuming. This guide aims to summarize what you really need to know to get started and provide a jumping platform for more in-depth learning. You can treat it as a quick reference.
 
-Additionaly, a nicely formatted printable PDF version of this guide is available [*here*](todo).
+Additionaly, a nicely formatted printable PDF version of this guide is [*available here*](/assets/CombineForRxSwiftDevs.pdf).
 
 If you're reading this, chances are that your codebase relies heavily on `RxSwift` streams. You're probably using them with `UIKit`. Now, you might be considering the introduction of new `SwiftUI` components, but there's a catch - `SwiftUI` bindings use `Combine`, not `RxSwift`. So, how can you feed your new Views with data from the existing streams? 
 
